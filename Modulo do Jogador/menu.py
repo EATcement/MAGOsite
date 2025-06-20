@@ -1,4 +1,4 @@
-from historico import historico_ficha_personagem
+from historico import gerar_pdf_ficha_especifica
 from edicao import editar_ficha
 from inventario import abrir_inventario
 from excluir import excluir_ficha
@@ -16,7 +16,7 @@ while True:
     opcao = input("Escolha uma opção: ").strip()
 
     if opcao == "1":
-        historico_ficha_personagem()
+        gerar_pdf_ficha_especifica()
     elif opcao == "2":
         editar_ficha()
     elif opcao == "3":

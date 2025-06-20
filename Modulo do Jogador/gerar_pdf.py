@@ -1,53 +1,42 @@
-import os
-import pickle
 from fpdf import FPDF
 
-# Carregar o dicionário do arquivo .pkl
-try:
-    with open("dicionarios.pkl", "rb") as f:
-        dicionarios = pickle.load(f)
-except FileNotFoundError:
-    print("Erro: Arquivo 'dicionarios.pkl' não encontrado. Rode 'salvar_dicionario.py' primeiro.")
-    exit(1)
+class PDFComVisual(FPDF):
+    def __init__(self, imagem_fundo):
+        super().__init__()
+        self.imagem_fundo = imagem_fundo
 
-# Função para gerar o PDF
-def gerar_pdf(nome_arquivo, data_dict):
-    pdf = FPDF()
+    def header(self):
+        # Coloca a imagem de fundo cobrindo toda a página
+        self.image(self.imagem_fundo, x=0, y=0, w=self.w, h=self.h)
+
+
+def gerar_pdf_com_visual(nome_arquivo, data_dict, imagem_fundo):
+    pdf = PDFComVisual(imagem_fundo)
     pdf.add_page()
-    pdf.set_font("Arial", size=12)
 
-    for chave, valor in data_dict.items():
-        texto = f"{chave}: {valor}" if not isinstance(valor, list) else f"{chave}:"
-        pdf.cell(200, 10, txt=texto, ln=True)
+    # Exemplo de conteúdo no centro da ficha visual (ajuste as posições como quiser)
+    pdf.set_font("Arial", 'B', 12)
+    pdf.set_text_color(0, 0, 0)
+    
+    campos_posicoes = {
+        "nome": (50, 30),
+        "idade": (50, 40),
+        "habilidades": (50, 50),  # será convertido para string
+    }
 
+    for campo, posicao in campos_posicoes.items():
+        valor = data_dict.get(campo, "")
         if isinstance(valor, list):
-            for item in valor:
-                pdf.cell(200, 10, txt=f"   - {item}", ln=True)
+            valor = ", ".join(valor)  # transforma lista em string
+        pdf.set_xy(*posicao)
+        pdf.cell(0, 10, f"{valor}", ln=1)
 
     pdf.output(nome_arquivo)
+    return nome_arquivo
+if __name__ == "__main__":
+    caminho_pdf = "C:/Users/Isabelle/Documents/GitHub/MAGOsite/Modulo do Jogador/ficha_integrada_visual.pdf"
+    caminho_imagem_fundo = "C:/Users/Isabelle/Documents/GitHub/MAGOsite/Modulo do Jogador/Ficha Personagem 3.jpg"
+    dados = {"nome": "Exemplo Teste"}
 
-# Função para gerar o PDF de um dicionário específico
-def gerar_pdf_especifico(id):
-    if id not in dicionarios:
-        print(f"Dicionário com id '{id}' não encontrado.")
-        return
-
-    data = dicionarios[id]
-    output_dir = "pdfs/"
-    os.makedirs(output_dir, exist_ok=True)
-
-    nome_pdf = f"{output_dir}dicionario_{id}.pdf"
-    gerar_pdf(nome_pdf, data)
-
-    print(f"\n✅ PDF gerado com sucesso: {nome_pdf}")
-
-# Mostra os IDs disponíveis
-print("IDs disponíveis:")
-for id_disponivel in dicionarios.keys():
-    print(f" - {id_disponivel}")
-
-# Solicita o ID ao usuário
-id_usuario = input("\nDigite o ID desejado para gerar o PDF: ").strip()
-
-# Gera o PDF com base no input
-gerar_pdf_especifico(id_usuario)
+    gerar_pdf_com_visual(caminho_pdf, dados, caminho_imagem_fundo)
+    print(f"PDF gerado em: {caminho_pdf}")

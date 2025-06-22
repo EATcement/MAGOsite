@@ -1,4 +1,4 @@
-from inventario import *
+from inventario_modulo import *
 from DADOS_pycharm import *
 
 def pausar():

@@ -1,1 +1,1 @@
-from Inventory.inventario import *
+from Inventory.inventario_modulo import *

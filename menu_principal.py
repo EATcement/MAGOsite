@@ -7,7 +7,7 @@ sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
 
 from Modulo_criacao_de_fichas.Criacao_Fichas.menu_fichas import menu_principal as menu_criacao_fichas
-from Modulo_do_Jogador.menu import menu_ficha_personagem as menu_ficha_personagem
+from Modulo_do_Jogador.menu import main as menu_ficha_personagem_main   
 
 def menu_principal():
     while True:
@@ -21,7 +21,7 @@ def menu_principal():
         if escolha == "1":
             menu_criacao_fichas()
         elif escolha == "2":
-            menu_ficha_personagem()
+            menu_ficha_personagem_main()
         elif escolha == "4":
             print("Saindo do sistema.")
             break

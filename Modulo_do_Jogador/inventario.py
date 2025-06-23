@@ -309,69 +309,86 @@ def escolher_ficha():
             print("Entrada inválida.")
 
 def menu_inventario():
-    global ficha, inventario
-    if ficha is None:
-        print("Nenhuma ficha definida. Escolha uma ficha antes de acessar o inventário.")
-        personagem = escolher_ficha()
-        if personagem:
-            f = carregar_ficha_personagem(personagem)
-            if f:
-                definir_ficha(f)
-                inventario = carregar_inventario(personagem)
-                print(f"Ficha de {personagem} carregada.")
-            else:
-                print("Falha ao carregar a ficha.")
-                return
-        else:
+    global ficha
+    
+    while True:
+        # Sempre pedir a ficha antes de mostrar o menu
+        print("Escolha uma ficha para acessar o inventário:")
+        pasta_fichas = obter_caminho_fichas()
+        arquivos = [f for f in os.listdir(pasta_fichas) if f.endswith(".pkl") and not f.endswith("_inventario.pkl")]
+
+        if not arquivos:
+            print("Nenhuma ficha .pkl encontrada.")
             return
 
-    while True:
-        print("\n--- MENU DO INVENTÁRIO ---")
-        print("1. Ver inventário")
-        print("2. Adicionar item manualmente")
-        print("3. Aplicar kit da classe")
-        print("4. Editar ouro")
-        print("5. Ver capacidade de carga")
-        print("6. Ver peso total dos itens")
-        print("7. Remover item do inventário")
-        print("8. Salvar inventário")
-        print("0. Voltar ao menu anterior")
+        for idx, nome in enumerate(arquivos, start=1):
+            print(f"{idx}. {nome.replace('.pkl', '')}")
 
-        escolha = input("Escolha uma opção (0-8): ").strip()
+        escolha = input("Digite o número da ficha (ou 0 para voltar): ").strip()
+        if escolha == "0":
+            return
+        if not escolha.isdigit() or not (1 <= int(escolha) <= len(arquivos)):
+            print("Escolha inválida, tente novamente.")
+            continue
 
-        if escolha == "1":
-            mostrar_inventario()
-        elif escolha == "2":
-            nome = input("Nome do item: ").strip()
-            quantidade = input("Quantidade: ").strip()
-            peso = input("Peso por unidade (kg): ").strip()
-            adicionar_item(nome, quantidade, peso)
-        elif escolha == "3":
-            add_kit(ficha)
-        elif escolha == "4":
-            quantia = input("Quanto ouro adicionar/remover? (use negativo para remover): ").strip()
-            editar_ouro(quantia)
-        elif escolha == "5":
-            capacidade = calcular_capacidade_peso(ficha)
-            print(f"Capacidade de carga: {capacidade} Kg")
-        elif escolha == "6":
-            peso = calc_peso_itens()
-            print(f"Peso total dos itens: {peso} Kg")
-        elif escolha == "7":
-            if not inventario["itens"]:
-                print("Inventário vazio!")
-                continue
-            print("\nItens no inventário:")
-            for idx, (item, info) in enumerate(inventario["itens"].items()):
-                print(f"{idx}: {item} ({info['quantidade']} unidades, {info['peso']} Kg cada)")
-            pos = input("Digite o número do item que deseja remover: ").strip()
-            remover_item(pos)
-        elif escolha == "8":
-            if ficha:
-                salvar_inventario(ficha["nome"])
+        nome_arquivo = arquivos[int(escolha) - 1]
+        nome_personagem = nome_arquivo[:-4].replace("_", " ")
+        f = carregar_ficha_personagem(nome_personagem)
+        if f is None:
+            print("Falha ao carregar a ficha.")
+            continue
+        definir_ficha(f)
+        print(f"Ficha de {nome_personagem} carregada.")
+
+        # Agora o menu do inventário para a ficha carregada
+        while True:
+            print("\n--- MENU DO INVENTÁRIO ---")
+            print("1. Ver inventário")
+            print("2. Adicionar item manualmente")
+            print("3. Aplicar kit da classe")
+            print("4. Editar ouro")
+            print("5. Ver capacidade de carga")
+            print("6. Ver peso total dos itens")
+            print("7. Remover item do inventário")
+            print("8. Salvar inventário")
+            print("0. Voltar ao menu anterior")
+
+            escolha_inv = input("Escolha uma opção (0-8): ").strip()
+
+            if escolha_inv == "1":
+                mostrar_inventario()
+            elif escolha_inv == "2":
+                nome_item = input("Nome do item: ").strip()
+                quantidade = input("Quantidade: ").strip()
+                peso = input("Peso por unidade (kg): ").strip()
+                adicionar_item(nome_item, quantidade, peso)
+            elif escolha_inv == "3":
+                add_kit(ficha)
+            elif escolha_inv == "4":
+                quantia = input("Quanto ouro adicionar/remover? (use negativo para remover): ").strip()
+                editar_ouro(quantia)
+            elif escolha_inv == "5":
+                capacidade = calcular_capacidade_peso(ficha)
+                print(f"Capacidade de carga: {capacidade} Kg")
+            elif escolha_inv == "6":
+                peso_total = calc_peso_itens()
+                print(f"Peso total dos itens: {peso_total} Kg")
+            elif escolha_inv == "7":
+                if not inventario["itens"]:
+                    print("Inventário vazio!")
+                    continue
+                print("\nItens no inventário:")
+                for idx, (item, info) in enumerate(inventario["itens"].items()):
+                    print(f"{idx}: {item} ({info['quantidade']} unidades, {info['peso']} Kg cada)")
+                pos = input("Digite o número do item que deseja remover: ").strip()
+                remover_item(pos)
+            elif escolha_inv == "8":
+                if ficha:
+                    salvar_inventario(ficha["nome"])
+                else:
+                    print("Ficha não definida. Não é possível salvar o inventário.")
+            elif escolha_inv == "0":
+                break
             else:
-                print("Ficha não definida.")
-        elif escolha == "0":
-            break
-        else:
-            print("Opção inválida! Escolha um número de 0 a 8.")
+                print("Opção inválida! Escolha um número de 0 a 8.")
+

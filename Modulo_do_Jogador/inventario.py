@@ -309,7 +309,7 @@ def escolher_ficha():
             print("Entrada inválida.")
 
 def menu_inventario():
-    global ficha
+    global ficha, inventario
     
     while True:
         # Sempre pedir a ficha antes de mostrar o menu
@@ -338,6 +338,9 @@ def menu_inventario():
             print("Falha ao carregar a ficha.")
             continue
         definir_ficha(f)
+
+        # ✅ Carrega o inventário correspondente à ficha selecionada
+        inventario = carregar_inventario(f["nome"])
         print(f"Ficha de {nome_personagem} carregada.")
 
         # Agora o menu do inventário para a ficha carregada
@@ -388,7 +391,12 @@ def menu_inventario():
                 else:
                     print("Ficha não definida. Não é possível salvar o inventário.")
             elif escolha_inv == "0":
+                # ✅ Salvamento automático ao sair
+                if ficha:
+                    salvar_inventario(ficha["nome"])
+                print(f"Inventário da ficha '{ficha['nome']}' salvo. Voltando ao menu principal.")
                 break
             else:
                 print("Opção inválida! Escolha um número de 0 a 8.")
+
 

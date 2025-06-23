@@ -4,16 +4,66 @@ import os
 PASTA_MONSTROS = "monstros"
 os.makedirs(PASTA_MONSTROS, exist_ok=True)
 
+TIPOS_MONSTROS = [
+    "Aberração", "Besta", "Construto", "Dragão", "Elemental",
+    "Fada", "Gigante", "Humanoide", "Monstro", "Mortos-Vivos"
+]
+
+TAMANHOS = [
+    "Minúsculo", "Muito Pequeno", "Pequeno", "Médio",
+    "Grande", "Enorme", "Colossal"
+]
+
+ALINHAMENTOS = [
+    "Leal e Bom", "Neutro e Bom", "Caótico e Bom",
+    "Leal e Neutro", "Neutro", "Caótico e Neutro",
+    "Leal e Mau", "Neutro e Mau", "Caótico e Mau"
+]
+
+TIPOS_DANO = [
+    "Cortante", "Perfurante", "Contundente", "Fogo",
+    "Gelo", "Raio", "Ácido", "Veneno", "Psíquico", "Sônico"
+]
+
+def escolher_opcao_numerada(titulo, opcoes):
+    print(f"\n{titulo}:")
+    for i, opcao in enumerate(opcoes, 1):
+        print(f"{i}. {opcao}")
+    while True:
+        escolha = input("Digite o número da opção desejada: ")
+        if escolha.isdigit() and 1 <= int(escolha) <= len(opcoes):
+            return opcoes[int(escolha) - 1]
+        print("Opção inválida. Tente novamente.")
+
+def escolher_multiplas_opcoes(titulo, opcoes):
+    print(f"\n{titulo} (digite números separados por vírgula, ou deixe vazio para nenhuma):")
+    for i, opcao in enumerate(opcoes, 1):
+        print(f"{i}. {opcao}")
+    escolha = input("Sua escolha: ")
+    if not escolha.strip():
+        return []
+    selecionados = []
+    for num in escolha.split(","):
+        num = num.strip()
+        if num.isdigit() and 1 <= int(num) <= len(opcoes):
+            selecionados.append(opcoes[int(num)-1])
+        else:
+            print(f"Opção inválida ignorada: {num}")
+    return selecionados
+
 def criar_ficha_monstro():
     monstro = {}
     monstro["nome"] = input("Nome do monstro: ")
-    monstro["tipo"] = input("Tipo (ex: aberração, besta, morto-vivo...): ")
-    monstro["tamanho"] = input("Tamanho (ex: Pequeno, Médio, Grande): ")
-    monstro["alinhamento"] = input("Alinhamento (ex: Leal Mau, Caótico Bom): ")
+    monstro["tipo"] = escolher_opcao_numerada("Tipo do monstro", TIPOS_MONSTROS)
+    monstro["tamanho"] = escolher_opcao_numerada("Tamanho do monstro", TAMANHOS)
+    monstro["alinhamento"] = escolher_opcao_numerada("Alinhamento", ALINHAMENTOS)
     monstro["CA"] = input("Classe de Armadura (CA): ")
     monstro["PV"] = input("Pontos de Vida (PV): ")
     monstro["deslocamento"] = input("Deslocamento (ex: 9m): ")
-
+    
+    monstro["nivel_desafio"] = input("Nível de desafio (ND): ")
+    monstro["xp"] = input("XP concedida quando derrotado: ")
+    
     print("\n--- Atributos ---")
     monstro["atributos"] = {
         "Força": input("FOR: "),
@@ -24,10 +74,14 @@ def criar_ficha_monstro():
         "Carisma": input("CAR: ")
     }
 
+    monstro["vulnerabilidades"] = escolher_multiplas_opcoes("Vulnerabilidades", TIPOS_DANO)
+    monstro["resistencias"] = escolher_multiplas_opcoes("Resistências", TIPOS_DANO)
+    monstro["imunidades"] = escolher_multiplas_opcoes("Imunidades", TIPOS_DANO)
+    
     monstro["habilidades"] = input("Habilidades especiais (separadas por vírgula): ").split(",")
     monstro["ataques"] = input("Ataques (separados por vírgula): ").split(",")
     monstro["descricao"] = input("Descrição adicional (história, poderes, etc): ")
-
+    
     return monstro
 
 def exibir_ficha_monstro(monstro):
@@ -38,7 +92,8 @@ def exibir_ficha_monstro(monstro):
             for attr, val in valor.items():
                 print(f"  {attr}: {val}")
         elif isinstance(valor, list):
-            print(f"{campo.capitalize()}: {', '.join(valor)}")
+            lista_formatada = ", ".join([v.strip() for v in valor]) if valor else "Nenhuma"
+            print(f"{campo.capitalize()}: {lista_formatada}")
         else:
             print(f"{campo.capitalize()}: {valor}")
 

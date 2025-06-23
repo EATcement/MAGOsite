@@ -78,14 +78,20 @@ def gerar_pdf_sem_fundo(nome_arquivo, data_dict):
         titulo_secao("Características e Habilidades")
         escrever_linha("Habilidades", data_dict["caracteristicas_habilidades"])
 
+    
     # Inventário
-    inventario = data_dict.get("inventario", [])
+    inventario = data_dict.get("inventario", {})
+
     if inventario:
-        titulo_secao("Inventário")
+        titulo_secao("Inventário", pdf)
         pdf.set_font("Times", "I", 12)
-        for item in inventario:
-            pdf.multi_cell(0, 8, f"- {item}")
+        for item, info in inventario.items():
+            quantidade = info.get("quantidade", 0)
+            pdf.multi_cell(0, 8, f"- {item} ({quantidade})")
         pdf.ln(2)
+    else:
+        pdf.set_font("Times", "I", 12)
+        pdf.cell(0, 10, "Inventário vazio.", ln=True)
 
     # Equipamentos
     equipamentos = data_dict.get("equipamentos", [])

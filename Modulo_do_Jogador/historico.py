@@ -2,7 +2,7 @@ import os
 import pickle
 from gerar_pdf import gerar_pdf_sem_fundo  
 
-PASTA_FICHAS = r"C:\Users\Isabelle\Documents\GitHub\MAGOsite\Modulo_criacao_de_fichas\Criacao_Fichas\fichas"
+PASTA_FICHAS = os.path.join(os.path.dirname(__file__), "fichas")
 PASTA_PDFS = "pdfs"
 
 def gerar_pdf_ficha_especifica():

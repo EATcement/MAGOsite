@@ -1,7 +1,7 @@
 import os
 
 def excluir_ficha():
-    pasta_fichas = r"C:\Users\Isabelle\Documents\GitHub\MAGOsite\Modulo_criacao_de_fichas\Criacao_Fichas\fichas"
+    pasta_fichas = os.path.join(os.path.dirname(__file__), "fichas")
     pasta_pdfs = "pdfs"       # pasta onde estão os PDFs gerados
 
     # Verifica se a pasta de fichas existe

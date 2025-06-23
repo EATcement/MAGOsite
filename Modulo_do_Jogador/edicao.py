@@ -10,7 +10,7 @@ def editar_ficha():
         print(f"Pasta {PASTA_FICHAS} não encontrada.")
         return
 
-    arquivos = [f for f in os.listdir(PASTA_FICHAS) if f.endswith(".pkl")]
+    arquivos = [f for f in os.listdir(PASTA_FICHAS) if f.endswith(".pkl") and not f.endswith("_inventario.pkl")]
     if not arquivos:
         print("Nenhuma ficha .pkl encontrada.")
         return

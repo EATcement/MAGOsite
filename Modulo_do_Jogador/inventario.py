@@ -14,7 +14,6 @@ def definir_ficha(f):
     ficha = f
 
 def obter_caminho_fichas():
-    # Retorna o caminho absoluto da pasta onde ficam as fichas
     return os.path.abspath(
         os.path.join(os.path.dirname(__file__), "..", "Modulo_criacao_de_fichas", "Criacao_Fichas", "fichas")
     )
@@ -31,6 +30,22 @@ def carregar_ficha_personagem(nome_personagem):
     with open(caminho_completo, "rb") as arquivo:
         return pickle.load(arquivo)
 
+def carregar_inventario(nome_ficha):
+    nome_base = nome_ficha.lower().replace(" ", "_")
+    caminho_fichas = obter_caminho_fichas()
+    nome_arquivo = os.path.join(caminho_fichas, f"{nome_base}_inventario.pkl")
+
+    if os.path.exists(nome_arquivo):
+        with open(nome_arquivo, "rb") as arq:
+            return pickle.load(arq)
+    else:
+        print("Inventário salvo não encontrado. Usando inventário vazio.")
+        return {
+            "itens": {},
+            "Ouro": 0,
+            "kit_aplicado": False
+        }
+
 def salvar_inventario(nome_ficha):
     nome_base = nome_ficha.lower().replace(" ", "_")
     caminho_fichas = obter_caminho_fichas()
@@ -42,27 +57,28 @@ def salvar_inventario(nome_ficha):
 
 def calcular_capacidade_peso(ficha):
     racas_peso = {
-        "anão da colina": 10,
-        "anão da montanha": 15,
-        "alto elfo": 0,
-        "elfo da floresta": 0,
-        "drow": 0,
-        "halfling pés-leves": 0,
-        "halfling robusto": 0,
-        "humano": 5,
-        "draconato": 15,
-        "gnomo da floresta": 0,
-        "gnomo das rochas": 0,
-        "meio-elfo": 0,
-        "meio-orc": 15,
-        "tiefling": 0,
-        "anão": 15,
-        "elfo": 0,
-        "halfling": 0,
-        "gnomo": 0
+        "anão da colina": 10, "anão da montanha": 15,
+        "alto elfo": 0, "elfo da floresta": 0, "drow": 0,
+        "halfling pés-leves": 0, "halfling robusto": 0,
+        "humano": 5, "draconato": 15,
+        "gnomo da floresta": 0, "gnomo das rochas": 0,
+        "meio-elfo": 0, "meio-orc": 15, "tiefling": 0,
+        "anão": 15, "elfo": 0, "halfling": 0, "gnomo": 0
     }
-    raca = ficha["raça"].strip().lower()
-    forca = int(ficha["atributos"]["Força"])
+
+    raca = ficha.get("raça") or ficha.get("raca")
+    if raca:
+        raca = raca.strip().lower()
+    else:
+        print("⚠️ Raça não encontrada na ficha. A capacidade de carga será zero.")
+        return 0
+
+    try:
+        forca = int(ficha["atributos"]["Força"])
+    except (KeyError, ValueError, TypeError):
+        print("⚠️ Atributo de Força inválido ou ausente. Usando Força 0.")
+        forca = 0
+
     return racas_peso.get(raca, 0) + 15 * forca
 
 def calc_peso_itens():
@@ -74,19 +90,85 @@ def calc_peso_itens():
     return peso_total
 
 def add_kit(ficha):
-    classe = ficha["classe"].lower()
+    classe = ficha.get("classe", "").strip().lower()
     if inventario["kit_aplicado"]:
         print("Kit já aplicado anteriormente.")
         return
 
     kit_classes = {
-        "bárbaro": {"machado de batalha": {"quantidade": 1, "peso": 5.5}, "machadinha": {"quantidade": 2, "peso": 1.0}, "lança": {"quantidade": 4, "peso": 1.3}, "saco de dormir": {"quantidade": 1, "peso": 2.5}},
-        # Copie os kits completos aqui como você já tem...
-        "bruxo": {"livro do pacto": {"quantidade": 1, "peso": 1.0}, "arma de pacto": {"quantidade": 1, "peso": 1.5}, "amuleto arcano": {"quantidade": 1, "peso": 0.2}, "poção de mana": {"quantidade": 1, "peso": 0.5}, "saco de dormir": {"quantidade": 1, "peso": 2.5}}
+        "guerreiro": {
+            "espada longa": {"quantidade": 1, "peso": 3.0},
+            "escudo": {"quantidade": 1, "peso": 6.0},
+            "armadura de couro": {"quantidade": 1, "peso": 8.0},
+            "rations": {"quantidade": 3, "peso": 0.5}
+        },
+        "mago": {
+            "grimório": {"quantidade": 1, "peso": 2.0},
+            "bastão arcano": {"quantidade": 1, "peso": 3.0},
+            "poção de mana": {"quantidade": 2, "peso": 0.5},
+            "túnica encantada": {"quantidade": 1, "peso": 1.5}
+        },
+        "ladino": {
+            "adaga": {"quantidade": 2, "peso": 0.5},
+            "capa de sombras": {"quantidade": 1, "peso": 1.0},
+            "ganzuás": {"quantidade": 1, "peso": 0.2},
+            "poção de invisibilidade": {"quantidade": 1, "peso": 0.3}
+        },
+        "clérigo": {
+            "símbolo sagrado": {"quantidade": 1, "peso": 0.5},
+            "mace": {"quantidade": 1, "peso": 4.0},
+            "kit de cura": {"quantidade": 2, "peso": 1.0},
+            "armadura leve": {"quantidade": 1, "peso": 6.0}
+        },
+        "bárbaro": {
+            "machado de batalha": {"quantidade": 1, "peso": 5.5},
+            "machadinha": {"quantidade": 2, "peso": 1.0},
+            "lança": {"quantidade": 4, "peso": 1.3}
+        },
+        "bardo": {
+            "alaúde": {"quantidade": 1, "peso": 1.0},
+            "poção de cura": {"quantidade": 1, "peso": 0.5},
+            "roupas elegantes": {"quantidade": 1, "peso": 2.0}
+        },
+        "bruxo": {
+            "livro do pacto": {"quantidade": 1, "peso": 1.0},
+            "arma de pacto": {"quantidade": 1, "peso": 1.5},
+            "amuleto arcano": {"quantidade": 1, "peso": 0.2},
+            "poção de mana": {"quantidade": 1, "peso": 0.5}
+        },
+        "druida": {
+            "cajado natural": {"quantidade": 1, "peso": 3.0},
+            "erva de cura": {"quantidade": 3, "peso": 0.3},
+            "capa camuflada": {"quantidade": 1, "peso": 1.0}
+        },
+        "feiticeiro": {
+            "anel arcano": {"quantidade": 1, "peso": 0.1},
+            "poção de mana": {"quantidade": 2, "peso": 0.5},
+            "roupa cerimonial": {"quantidade": 1, "peso": 1.5}
+        },
+        "monge": {
+            "bastão": {"quantidade": 1, "peso": 2.0},
+            "faixas de combate": {"quantidade": 1, "peso": 0.5},
+            "medalhão do templo": {"quantidade": 1, "peso": 0.2}
+        },
+        "paladino": {
+            "espada longa": {"quantidade": 1, "peso": 3.0},
+            "símbolo sagrado": {"quantidade": 1, "peso": 0.5},
+            "poção de cura": {"quantidade": 2, "peso": 0.5},
+            "armadura pesada": {"quantidade": 1, "peso": 10.0}
+        },
+        "patrulheiro": {
+            "arco longo": {"quantidade": 1, "peso": 2.0},
+            "aljava com flechas": {"quantidade": 20, "peso": 0.1},
+            "capa de floresta": {"quantidade": 1, "peso": 1.0}
+        }
     }
 
     if classe not in kit_classes:
-        print("Classe inválida!")
+        print(f"Classe '{classe}' não tem um kit cadastrado.")
+        print("As classes disponíveis atualmente são:")
+        for k in sorted(kit_classes.keys()):
+            print(f" - {k.capitalize()}")
         return
 
     kit = kit_classes[classe]
@@ -107,7 +189,8 @@ def add_kit(ficha):
 
     inventario["Ouro"] += 10
     inventario["kit_aplicado"] = True
-    print(f"Kit inicial de {classe} aplicado! WoW! Irado!")
+    print(f"Kit inicial da classe '{classe.capitalize()}' aplicado com sucesso!")
+
 
 def mostrar_inventario():
     global ficha
@@ -119,9 +202,7 @@ def mostrar_inventario():
         print("Inventário vazio")
     else:
         for idx, (item, info) in enumerate(inventario["itens"].items(), start=1):
-            quantidade = info["quantidade"]
-            peso = info["peso"]
-            print(f"{idx}. {item} | {peso} Kg | ({quantidade})")
+            print(f"{idx}. {item} | {info['peso']} Kg | ({info['quantidade']})")
     print(f"Ouro: {inventario['Ouro']}G\nPeso total: {calc_peso_itens()}/{calcular_capacidade_peso(ficha)}")
 
 def adicionar_item(nome, quantidade, peso):
@@ -135,30 +216,26 @@ def adicionar_item(nome, quantidade, peso):
     except ValueError:
         print("Quantia ou peso inválidos! Use apenas números.")
         return
-    if quantidade <= 0:
-        print("A quantidade deve ser um número inteiro positivo!")
+    if quantidade <= 0 or peso <= 0:
+        print("A quantidade e o peso devem ser positivos.")
         return
-    if peso <= 0:
-        print("O peso do item deve ser um número positivo!")
-        return
+
     atual = calc_peso_itens()
     max_peso = calcular_capacidade_peso(ficha)
     if atual + (peso * quantidade) > max_peso:
-        print(f'"{nome}" excederia sua capacidade de carga e, portanto, não foi adicionado!')
+        print(f'"{nome}" excederia sua capacidade de carga.')
         return
 
     if nome in inventario["itens"]:
         peso_existente = inventario["itens"][nome]["peso"]
         if peso_existente == peso:
             inventario["itens"][nome]["quantidade"] += quantidade
-            print(f'{nome} ({quantidade}) adicionado com sucesso!')
         else:
             novo_nome = f"{nome} (variação)"
             inventario["itens"][novo_nome] = {"quantidade": quantidade, "peso": peso}
-            print(f'{nome} ({quantidade}) foi adicionado em outro slot devido à variação de peso do item')
     else:
         inventario["itens"][nome] = {"quantidade": quantidade, "peso": peso}
-        print(f'{nome} ({quantidade}) adicionado com sucesso!')
+    print(f'{nome} ({quantidade}) adicionado com sucesso!')
 
 def editar_ouro(quantos):
     try:
@@ -181,7 +258,7 @@ def remover_item(posicao):
     try:
         posicao = int(posicao)
     except ValueError:
-        print("Posição inválida! Use um número inteiro.")
+        print("Posição inválida!")
         return
     inventario_lista = list(inventario["itens"].items())
     if 0 <= posicao < len(inventario_lista):
@@ -190,28 +267,25 @@ def remover_item(posicao):
         print(f'Você selecionou {item} ({quantia})')
         if quantia == 1:
             inventario["itens"].pop(item)
-            print(f'{item} foi perdido para sempre.')
         else:
             remove_item = input(f'Quantos de {item} deseja remover? ')
             if remove_item.isdigit():
                 quantos = int(remove_item)
                 if quantos <= 0:
-                    print("Remoção inválida. Use um número positivo.")
+                    print("Remoção inválida.")
                     return
                 if quantos >= quantia:
                     inventario["itens"].pop(item)
-                    print(f'{item} foi perdido para sempre.')
                 else:
                     inventario["itens"][item]["quantidade"] -= quantos
-                    print(f'{quantos} unidades de {item} foram descartadas.')
             else:
-                print("Entrada inválida, digite o número da posição do item no inventário.")
+                print("Entrada inválida.")
     else:
         print("Item inválido!")
 
 def escolher_ficha():
     pasta_fichas = obter_caminho_fichas()
-    arquivos = [f for f in os.listdir(pasta_fichas) if f.endswith(".pkl")]
+    arquivos = [f for f in os.listdir(pasta_fichas) if f.endswith(".pkl") and not f.endswith("_inventario.pkl")]
 
     if not arquivos:
         print("Nenhuma ficha .pkl encontrada.")
@@ -232,10 +306,10 @@ def escolher_ficha():
             else:
                 print("Número fora do intervalo.")
         else:
-            print("Entrada inválida, digite apenas o número.")
+            print("Entrada inválida.")
 
 def menu_inventario():
-    global ficha
+    global ficha, inventario
     if ficha is None:
         print("Nenhuma ficha definida. Escolha uma ficha antes de acessar o inventário.")
         personagem = escolher_ficha()
@@ -243,6 +317,7 @@ def menu_inventario():
             f = carregar_ficha_personagem(personagem)
             if f:
                 definir_ficha(f)
+                inventario = carregar_inventario(personagem)
                 print(f"Ficha de {personagem} carregada.")
             else:
                 print("Falha ao carregar a ficha.")
@@ -295,9 +370,8 @@ def menu_inventario():
             if ficha:
                 salvar_inventario(ficha["nome"])
             else:
-                print("Ficha não definida. Não é possível salvar o inventário.")
+                print("Ficha não definida.")
         elif escolha == "0":
             break
         else:
             print("Opção inválida! Escolha um número de 0 a 8.")
-

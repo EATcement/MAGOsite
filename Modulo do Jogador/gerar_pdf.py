@@ -65,9 +65,9 @@ def gerar_pdf_sem_fundo(nome_arquivo, data_dict):
             escrever_linha(chave, valor)
 
     # Vida
-    if "vida" in data_dict:
+    if "HP" in data_dict:
         titulo_secao("Pontos de Vida")
-        escrever_linha("Vida", data_dict["vida"])
+        escrever_linha("Vida", data_dict["HP"])
 
     # Idiomas e habilidades
     if "idiomas_proficiencias" in data_dict:

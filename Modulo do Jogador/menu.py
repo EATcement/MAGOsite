@@ -1,7 +1,6 @@
 from historico import gerar_pdf_ficha_especifica
 from edicao import editar_ficha
 from excluir import excluir_ficha
-# importe seu módulo inventario, por exemplo:
 from inventario import menu_inventario
 
 def menu_ficha_personagem():

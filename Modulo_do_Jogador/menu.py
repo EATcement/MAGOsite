@@ -1,7 +1,8 @@
-from historico import gerar_pdf_ficha_especifica
-from edicao import editar_ficha
-from excluir import excluir_ficha
-from inventario import menu_inventario
+from .historico import gerar_pdf_ficha_especifica
+from .edicao import editar_ficha
+from .excluir import excluir_ficha
+from .inventario import menu_inventario
+
 
 def menu_ficha_personagem():
     print("\n=== MENU FICHA DE PERSONAGEM ===")

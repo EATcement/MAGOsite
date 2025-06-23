@@ -19,7 +19,7 @@ class PDFEstiloMedieval(FPDF):
         self.set_text_color(140, 100, 60)
         self.cell(0, 10, "-- Que os deuses o protejam nas trilhas do destino --", 0, 0, "C")
 
-def gerar_pdf_sem_fundo(nome_arquivo, data_dict):
+def gerar_pdf_sem_fundo(nome_arquivo, data_dict, inventario_dict=None):
     pdf = PDFEstiloMedieval()
 
     def titulo_secao(titulo):
@@ -78,17 +78,16 @@ def gerar_pdf_sem_fundo(nome_arquivo, data_dict):
         titulo_secao("Características e Habilidades")
         escrever_linha("Habilidades", data_dict["caracteristicas_habilidades"])
 
-    
     # Inventário
-    inventario = data_dict.get("inventario", {})
-
-    if inventario:
-        titulo_secao("Inventário", pdf)
+    if inventario_dict and inventario_dict.get("itens"):
+        titulo_secao("Inventário")
         pdf.set_font("Times", "I", 12)
-        for item, info in inventario.items():
+        for item, info in inventario_dict["itens"].items():
             quantidade = info.get("quantidade", 0)
             pdf.multi_cell(0, 8, f"- {item} ({quantidade})")
-        pdf.ln(2)
+        ouro = inventario_dict.get("Ouro", 0)
+        pdf.ln(1)
+        pdf.cell(0, 8, f"Ouro: {ouro}G", ln=True)
     else:
         pdf.set_font("Times", "I", 12)
         pdf.cell(0, 10, "Inventário vazio.", ln=True)

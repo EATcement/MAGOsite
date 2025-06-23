@@ -1,8 +1,7 @@
 import os
 import pickle
-from gerar_pdf import gerar_pdf_sem_fundo  # Função para gerar PDF sem imagem de fundo
+from gerar_pdf import gerar_pdf_sem_fundo  
 
-# Use raw string (r"") para evitar problemas com backslashes
 PASTA_FICHAS = r"C:\Users\Isabelle\Documents\GitHub\MAGOsite\Modulo_criacao_de_fichas\Criacao_Fichas\fichas"
 PASTA_PDFS = "pdfs"
 
@@ -11,7 +10,9 @@ def gerar_pdf_ficha_especifica():
         print(f"Pasta {PASTA_FICHAS} não encontrada.")
         return
 
-    arquivos = [f for f in os.listdir(PASTA_FICHAS) if f.endswith(".pkl")]
+    # Lista só arquivos de ficha, ignorando inventários
+    arquivos = [f for f in os.listdir(PASTA_FICHAS) 
+                if f.endswith(".pkl") and not f.endswith("_inventario.pkl")]
     if not arquivos:
         print("Nenhuma ficha .pkl encontrada na pasta.")
         return
@@ -23,7 +24,6 @@ def gerar_pdf_ficha_especifica():
 
     escolha = input("Digite o nome da ficha que deseja visualizar: ").strip().lower().replace(" ", "_")
 
-    # Procurar arquivo correspondente ao nome informado
     arquivo_escolhido = None
     for arquivo in arquivos:
         nome_arquivo = arquivo.replace(".pkl", "").lower().replace(" ", "_")
@@ -35,19 +35,26 @@ def gerar_pdf_ficha_especifica():
         print("Ficha não encontrada.")
         return
 
-    caminho_pkl = os.path.join(PASTA_FICHAS, arquivo_escolhido)
+    caminho_ficha = os.path.join(PASTA_FICHAS, arquivo_escolhido)
+    nome_ficha = arquivo_escolhido.replace(".pkl", "").lower().replace(" ", "_")
+    caminho_inventario = os.path.join(PASTA_FICHAS, f"{nome_ficha}_inventario.pkl")
 
     try:
-        with open(caminho_pkl, "rb") as f:
+        # Carrega ficha
+        with open(caminho_ficha, "rb") as f:
             ficha = pickle.load(f)
 
-        nome_ficha = ficha.get("nome", "sem_nome").lower().replace(" ", "_")
+        # Tenta carregar inventário correspondente, se existir
+        inventario = {}
+        if os.path.exists(caminho_inventario):
+            with open(caminho_inventario, "rb") as f:
+                inventario = pickle.load(f)
 
         os.makedirs(PASTA_PDFS, exist_ok=True)
         caminho_pdf = os.path.join(PASTA_PDFS, f"ficha_{nome_ficha}.pdf")
 
-        # Gera o PDF sem imagem de fundo
-        gerar_pdf_sem_fundo(caminho_pdf, ficha)
+        # Passa ficha e inventário para o gerador de PDF (modifique gerar_pdf_sem_fundo para aceitar inventario)
+        gerar_pdf_sem_fundo(caminho_pdf, ficha, inventario)
 
         print(f"PDF gerado com sucesso em: {caminho_pdf}")
 

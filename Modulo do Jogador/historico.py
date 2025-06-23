@@ -1,12 +1,10 @@
 import os
 import pickle
-from gerar_pdf import gerar_pdf_com_visual
+from gerar_pdf import gerar_pdf_sem_fundo  # Função para gerar PDF sem imagem de fundo
 
-PASTA_FICHAS = "C:/Users/Isabelle/Documents/GitHub/MAGOsite/fichas"
-IMAGEM_FUNDO = "C:/Users/Isabelle/Documents/GitHub/MAGOsite/Modulo do Jogador/Ficha Personagem 3.jpg"
+# Use raw string (r"") para evitar problemas com backslashes
+PASTA_FICHAS = r"C:\Users\Isabelle\Documents\GitHub\MAGOsite\Modulo_criacao_de_fichas\Criacao_Fichas\fichas"
 PASTA_PDFS = "pdfs"
-
-
 
 def gerar_pdf_ficha_especifica():
     if not os.path.exists(PASTA_FICHAS):
@@ -25,11 +23,11 @@ def gerar_pdf_ficha_especifica():
 
     escolha = input("Digite o nome da ficha que deseja visualizar: ").strip().lower().replace(" ", "_")
 
-    # Procura o arquivo correspondente ao nome informado
+    # Procurar arquivo correspondente ao nome informado
     arquivo_escolhido = None
     for arquivo in arquivos:
-        nome_sem_ext = arquivo.replace(".pkl", "").lower().replace(" ", "_")
-        if escolha == nome_sem_ext:
+        nome_arquivo = arquivo.replace(".pkl", "").lower().replace(" ", "_")
+        if escolha == nome_arquivo:
             arquivo_escolhido = arquivo
             break
 
@@ -42,17 +40,19 @@ def gerar_pdf_ficha_especifica():
     try:
         with open(caminho_pkl, "rb") as f:
             ficha = pickle.load(f)
+
         nome_ficha = ficha.get("nome", "sem_nome").lower().replace(" ", "_")
+
         os.makedirs(PASTA_PDFS, exist_ok=True)
         caminho_pdf = os.path.join(PASTA_PDFS, f"ficha_{nome_ficha}.pdf")
-        gerar_pdf_com_visual(caminho_pdf, ficha, IMAGEM_FUNDO)
-        print(f"PDF gerado: {caminho_pdf}")
+
+        # Gera o PDF sem imagem de fundo
+        gerar_pdf_sem_fundo(caminho_pdf, ficha)
+
+        print(f"PDF gerado com sucesso em: {caminho_pdf}")
+
     except Exception as e:
-        print(f"Erro ao processar {arquivo_escolhido}: {e}")
+        print(f"Erro ao processar '{arquivo_escolhido}': {e}")
 
 if __name__ == "__main__":
-    # Para gerar todos os PDFs, descomente:
-    # gerar_todos_pdfs()
-
-    # Para gerar PDF de ficha específica por nome:
     gerar_pdf_ficha_especifica()

@@ -1,52 +1,99 @@
 from fpdf import FPDF
 
-class PDFComVisual(FPDF):
-    def __init__(self, imagem_fundo):
+class PDFEstiloMedieval(FPDF):
+    def __init__(self):
         super().__init__()
-        self.imagem_fundo = imagem_fundo
+        self.set_auto_page_break(auto=True, margin=15)
+        self.add_page()
+        self.set_font("Times", size=12)
 
     def header(self):
-        self.image(self.imagem_fundo, x=0, y=0, w=self.w, h=self.h)
+        self.set_font("Times", "B", 20)
+        self.set_text_color(80, 40, 20)
+        self.cell(0, 12, "*** FICHA DO AVENTUREIRO ***", ln=True, align="C")
+        self.ln(5)
 
-def gerar_pdf_com_visual(nome_arquivo, data_dict, imagem_fundo):
-    pdf = PDFComVisual(imagem_fundo)
-    pdf.add_page()
-    pdf.set_font("Arial", size=20)
-    pdf.set_text_color(0, 0, 0)
+    def footer(self):
+        self.set_y(-15)
+        self.set_font("Times", "I", 10)
+        self.set_text_color(140, 100, 60)
+        self.cell(0, 10, "-- Que os deuses o protejam nas trilhas do destino --", 0, 0, "C")
 
-    campos_posicoes = {
-        "nome": (165, 15),
-        "classe": (96, 15),
-        "raça": (120, 23),
-        "nível": (185, 34),
-        "idade": (50, 40),
-        "personalidade": (165, 58),  # se quiser usar, adapte para "personalidade"
-        "caracteristicas_habilidades": (165, 185),  # adapte para o que quer mostrar
-        "proficiencias": (25, 265),  # adaptar para "proficiencias"
-    }
+def gerar_pdf_sem_fundo(nome_arquivo, data_dict):
+    pdf = PDFEstiloMedieval()
 
-    # Posição para os atributos dentro do subdicionário 'atributos'
-    posicoes_atributos = {
-        "Força": (22, 51),
-        "Constituição": (22, 86),
-        "Destreza": (22, 121),
-        "Inteligência": (22, 156),
-        "Sabedoria": (22, 191),
-        "Carisma": (22, 226),
-    }
+    def titulo_secao(titulo):
+        pdf.set_font("Times", "B", 16)
+        pdf.set_text_color(100, 50, 20)
+        pdf.cell(0, 10, f"-- {titulo.upper()} --", ln=True)
+        pdf.set_draw_color(160, 120, 80)
+        pdf.line(10, pdf.get_y(), 200, pdf.get_y())
+        pdf.ln(4)
 
-    # Escrever campos principais
-    for campo, posicao in campos_posicoes.items():
-        valor = data_dict.get(campo, "")
-        pdf.set_xy(*posicao)
-        pdf.multi_cell(0, 5, str(valor))
+    def escrever_linha(titulo, valor):
+        pdf.set_font("Times", "B", 13)
+        pdf.set_text_color(60, 30, 10)
+        pdf.cell(50, 8, f"{titulo}:", ln=0)
+        pdf.set_font("Times", "", 13)
+        pdf.multi_cell(0, 8, str(valor))
+        pdf.ln(1)
 
-    # Escrever atributos que estão dentro de data_dict["atributos"]
+    # Informações Básicas
+    titulo_secao("Informações Básicas")
+    escrever_linha("Nome", data_dict.get("nome", ""))
+    escrever_linha("Gênero", data_dict.get("gênero", ""))
+    escrever_linha("Altura", data_dict.get("altura", ""))
+    escrever_linha("Idade", data_dict.get("idade", ""))
+    escrever_linha("Alinhamento", data_dict.get("alinhamento", ""))
+    escrever_linha("Raça", data_dict.get("raça", ""))
+    escrever_linha("Classe", data_dict.get("classe", ""))
+    escrever_linha("Subclasse", data_dict.get("subclasses", ""))
+    escrever_linha("Nível", data_dict.get("nível", ""))
+
+    # Personalidade e história
+    titulo_secao("Descrição e Personalidade")
+    escrever_linha("Aparência", data_dict.get("aparência", ""))
+    escrever_linha("Personalidade", data_dict.get("personalidade", ""))
+    escrever_linha("História", data_dict.get("história", ""))
+
+    # Atributos
     atributos = data_dict.get("atributos", {})
-    for attr, posicao in posicoes_atributos.items():
-        valor = atributos.get(attr, "")
-        pdf.set_xy(*posicao)
-        pdf.multi_cell(0, 5, str(valor))
+    if atributos:
+        titulo_secao("Atributos")
+        for chave in ["Força", "Destreza", "Constituição", "Inteligência", "Sabedoria", "Carisma"]:
+            valor = atributos.get(chave, "-")
+            escrever_linha(chave, valor)
+
+    # Vida
+    if "vida" in data_dict:
+        titulo_secao("Pontos de Vida")
+        escrever_linha("Vida", data_dict["vida"])
+
+    # Idiomas e habilidades
+    if "idiomas_proficiencias" in data_dict:
+        titulo_secao("Idiomas e Proficiências")
+        escrever_linha("Idiomas", data_dict["idiomas_proficiencias"])
+
+    if "caracteristicas_habilidades" in data_dict:
+        titulo_secao("Características e Habilidades")
+        escrever_linha("Habilidades", data_dict["caracteristicas_habilidades"])
+
+    # Inventário
+    inventario = data_dict.get("inventario", [])
+    if inventario:
+        titulo_secao("Inventário")
+        pdf.set_font("Times", "I", 12)
+        for item in inventario:
+            pdf.multi_cell(0, 8, f"- {item}")
+        pdf.ln(2)
+
+    # Equipamentos
+    equipamentos = data_dict.get("equipamentos", [])
+    if equipamentos:
+        titulo_secao("Equipamentos")
+        pdf.set_font("Times", "I", 12)
+        for item in equipamentos:
+            pdf.multi_cell(0, 8, f"- {item}")
+        pdf.ln(2)
 
     pdf.output(nome_arquivo)
-

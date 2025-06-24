@@ -11,7 +11,7 @@ def gerar_pdf_ficha_especifica():
         print(f"Pasta {PASTA_FICHAS} não encontrada.")
         return
 
-    # Lista só arquivos de ficha, ignorando inventários
+    
     arquivos = [f for f in os.listdir(PASTA_FICHAS) 
                 if f.endswith(".pkl") and not f.endswith("_inventario.pkl")]
     if not arquivos:
@@ -41,11 +41,11 @@ def gerar_pdf_ficha_especifica():
     caminho_inventario = os.path.join(PASTA_FICHAS, f"{nome_ficha}_inventario.pkl")
 
     try:
-        # Carrega ficha
+        
         with open(caminho_ficha, "rb") as f:
             ficha = pickle.load(f)
 
-        # Tenta carregar inventário correspondente, se existir
+        
         inventario = {}
         if os.path.exists(caminho_inventario):
             with open(caminho_inventario, "rb") as f:
@@ -54,7 +54,7 @@ def gerar_pdf_ficha_especifica():
         os.makedirs(PASTA_PDFS, exist_ok=True)
         caminho_pdf = os.path.join(PASTA_PDFS, f"ficha_{nome_ficha}.pdf")
 
-        # Passa ficha e inventário para o gerador de PDF (modifique gerar_pdf_sem_fundo para aceitar inventario)
+        
         gerar_pdf_sem_fundo(caminho_pdf, ficha, inventario)
 
         print(f"PDF gerado com sucesso em: {caminho_pdf}")

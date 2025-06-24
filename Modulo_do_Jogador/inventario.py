@@ -312,7 +312,7 @@ def menu_inventario():
     global ficha, inventario
     
     while True:
-        # Sempre pedir a ficha antes de mostrar o menu
+        
         print("Escolha uma ficha para acessar o inventário:")
         pasta_fichas = obter_caminho_fichas()
         arquivos = [f for f in os.listdir(pasta_fichas) if f.endswith(".pkl") and not f.endswith("_inventario.pkl")]
@@ -339,11 +339,11 @@ def menu_inventario():
             continue
         definir_ficha(f)
 
-        # ✅ Carrega o inventário correspondente à ficha selecionada
+        
         inventario = carregar_inventario(f["nome"])
         print(f"Ficha de {nome_personagem} carregada.")
 
-        # Agora o menu do inventário para a ficha carregada
+        
         while True:
             print("\n--- MENU DO INVENTÁRIO ---")
             print("1. Ver inventário")
@@ -391,7 +391,7 @@ def menu_inventario():
                 else:
                     print("Ficha não definida. Não é possível salvar o inventário.")
             elif escolha_inv == "0":
-                # ✅ Salvamento automático ao sair
+                
                 if ficha:
                     salvar_inventario(ficha["nome"])
                 print(f"Inventário da ficha '{ficha['nome']}' salvo. Voltando ao menu principal.")

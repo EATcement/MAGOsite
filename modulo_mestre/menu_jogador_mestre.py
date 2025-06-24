@@ -7,10 +7,10 @@ except ImportError:
     import sys
     print("Pacote 'fpdf2' não encontrado. Instalando automaticamente...")
     subprocess.check_call([sys.executable, "-m", "pip", "install", "fpdf2"])
-    from fpdf import FPDF  # Tenta importar novamente após instalação
+    from fpdf import FPDF  
 
 
-# Agora pode importar normalmente os módulos que usam fpdf
+
 from Modulo_do_Jogador.historico import gerar_pdf_ficha_especifica
 from Modulo_do_Jogador.excluir import excluir_ficha
 from Modulo_do_Jogador.inventario import menu_inventario

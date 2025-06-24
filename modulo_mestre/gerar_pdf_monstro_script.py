@@ -27,13 +27,13 @@ def carregar_ficha_monstro():
     with open(caminho_ficha, "rb") as arq:
         monstro = pickle.load(arq)
 
-    # Definir o caminho de saída do PDF
+    
     nome_pdf = nome_arquivo.replace(".pkl", ".pdf")
     pasta_saida = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "pdfs", "monstros_pdf"))
     os.makedirs(pasta_saida, exist_ok=True)
     caminho_pdf = os.path.join(pasta_saida, nome_pdf)
 
-    # Gerar o PDF
+    
     gerar_pdf_monstro(caminho_pdf, monstro)
     print(f"\nPDF gerado com sucesso: {caminho_pdf}")
 

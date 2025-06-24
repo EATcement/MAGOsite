@@ -73,12 +73,12 @@ def editar_ficha():
         else:
             print("Opção inválida. Tente novamente.")
 
-    # Salvar .pkl atualizado
+    
     with open(caminho_ficha, "wb") as f:
         pickle.dump(ficha, f)
     print("Ficha atualizada com sucesso!")
 
-    # Atualizar PDF
+    
     os.makedirs(PASTA_PDFS, exist_ok=True)
     nome_ficha = ficha.get("nome", "sem_nome").lower().replace(" ", "_")
     caminho_pdf = os.path.join(PASTA_PDFS, f"ficha_{nome_ficha}.pdf")

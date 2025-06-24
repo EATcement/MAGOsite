@@ -10,7 +10,7 @@ class PDFEstiloMonstro(FPDF):
 
     def header(self):
         self.set_font("Times", "B", 20)
-        self.set_text_color(150, 0, 0)  # Tom de vermelho
+        self.set_text_color(150, 0, 0)  
         self.cell(0, 12, "*** FICHA DE MONSTRO ***", ln=True, align="C")
         self.ln(5)
 
@@ -47,7 +47,7 @@ def gerar_pdf_monstro(nome_arquivo, monstro):
         pdf.multi_cell(largura_disponivel, 8, texto)
         pdf.ln(1)
 
-    # Informações Básicas
+    
     titulo_secao("Informações Básicas")
     escrever_linha("Nome", monstro.get("nome", ""))
     escrever_linha("Tipo", monstro.get("tipo", ""))
@@ -59,7 +59,7 @@ def gerar_pdf_monstro(nome_arquivo, monstro):
     escrever_linha("Nível de Desafio", monstro.get("nivel_desafio", ""))
     escrever_linha("XP", monstro.get("xp", ""))
 
-    # Atributos
+    
     atributos = monstro.get("atributos", {})
     if atributos:
         titulo_secao("Atributos")
@@ -67,25 +67,25 @@ def gerar_pdf_monstro(nome_arquivo, monstro):
             valor = atributos.get(chave, "-")
             escrever_linha(chave, valor)
 
-    # Vulnerabilidades, Resistências e Imunidades
+    
     titulo_secao("Vulnerabilidades / Resistências / Imunidades")
     escrever_linha("Vulnerabilidades", ", ".join(monstro.get("vulnerabilidades", []) or ["Nenhuma"]))
     escrever_linha("Resistências", ", ".join(monstro.get("resistencias", []) or ["Nenhuma"]))
     escrever_linha("Imunidades", ", ".join(monstro.get("imunidades", []) or ["Nenhuma"]))
 
-    # Habilidades Especiais
+    
     titulo_secao("Habilidades Especiais")
     escrever_linha("Habilidades", ", ".join(monstro.get("habilidades", []) or ["Nenhuma"]))
 
-    # Ataques
+    
     titulo_secao("Ataques")
     escrever_linha("Ataques", ", ".join(monstro.get("ataques", []) or ["Nenhum"]))
 
-    # Descrição
+    
     titulo_secao("Descrição")
     escrever_linha("Descrição", monstro.get("descricao", "Sem descrição."))
 
-    # Criar diretório se não existir
+    
     pasta_saida = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "pdfs", "monstros_pdf"))
     os.makedirs(pasta_saida, exist_ok=True)
 

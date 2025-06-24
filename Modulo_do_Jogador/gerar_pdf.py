@@ -33,15 +33,15 @@ def gerar_pdf_sem_fundo(nome_arquivo, data_dict, inventario_dict=None):
     def escrever_linha(titulo, valor):
         pdf.set_font("Times", "B", 13)
         pdf.set_text_color(60, 30, 10)
-        pdf.cell(50, 8, f"{titulo}:", ln=0)  # título escrito
+        pdf.cell(50, 8, f"{titulo}:", ln=0)  
 
         pdf.set_font("Times", "", 13)
         texto = str(valor) if valor else "-"
         
-        # Posição vertical atual para alinhar o texto valor na mesma linha
+        
         y_atual = pdf.get_y()
 
-        # Define cursor para início do texto valor (logo após os 50mm do título)
+        
         x_texto = pdf.l_margin + 50
         pdf.set_xy(x_texto, y_atual)
 
@@ -54,7 +54,7 @@ def gerar_pdf_sem_fundo(nome_arquivo, data_dict, inventario_dict=None):
 
 
 
-    # Informações Básicas
+    
     titulo_secao("Informações Básicas")
     escrever_linha("Nome", data_dict.get("nome", ""))
     escrever_linha("Gênero", data_dict.get("gênero", ""))
@@ -66,13 +66,13 @@ def gerar_pdf_sem_fundo(nome_arquivo, data_dict, inventario_dict=None):
     escrever_linha("Subclasse", data_dict.get("subclasses", ""))
     escrever_linha("Nível", data_dict.get("nível", ""))
 
-    # Personalidade e história
+    
     titulo_secao("Descrição e Personalidade")
     escrever_linha("Aparência", data_dict.get("aparência", ""))
     escrever_linha("Personalidade", data_dict.get("personalidade", ""))
     escrever_linha("História", data_dict.get("história", ""))
 
-    # Atributos
+   
     atributos = data_dict.get("atributos", {})
     if atributos:
         titulo_secao("Atributos")
@@ -80,12 +80,12 @@ def gerar_pdf_sem_fundo(nome_arquivo, data_dict, inventario_dict=None):
             valor = atributos.get(chave, "-")
             escrever_linha(chave, valor)
 
-    # Vida
+    
     if "HP" in data_dict:
         titulo_secao("Pontos de Vida")
         escrever_linha("Vida", data_dict["HP"])
 
-    # Idiomas e habilidades
+    
     if "idiomas_proficiencias" in data_dict:
         titulo_secao("Idiomas e Proficiências")
         escrever_linha("Idiomas", data_dict["idiomas_proficiencias"])
@@ -94,8 +94,7 @@ def gerar_pdf_sem_fundo(nome_arquivo, data_dict, inventario_dict=None):
         titulo_secao("Características e Habilidades")
         escrever_linha("Habilidades", data_dict["caracteristicas_habilidades"])
 
-    # Inventário
-    # Inventário
+    
     if inventario_dict and inventario_dict.get("itens"):
         titulo_secao("Inventário")
         pdf.set_font("Times", "I", 12)
@@ -116,12 +115,10 @@ def gerar_pdf_sem_fundo(nome_arquivo, data_dict, inventario_dict=None):
         pdf.cell(0, 10, "Inventário vazio.", ln=True)
 
 
-
-
-    # Equipamentos
+    
     equipamentos = data_dict.get("equipamentos", [])
 
-    # Evitar duplicação se os equipamentos forem exatamente os mesmos do inventário
+    
     inventario_itens = []
     if inventario_dict and inventario_dict.get("itens"):
         inventario_itens = [f"- {item} ({info.get('quantidade', 0)})" for item, info in

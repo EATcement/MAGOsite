@@ -64,11 +64,11 @@ def editar_ficha_monstro():
 
     monstro["descricao"] = input(f"Descrição adicional ({monstro['descricao']}): ") or monstro["descricao"]
 
-    # Salvar atualização da ficha .pkl
+    
     with open(caminho, "wb") as arq:
         pickle.dump(monstro, arq)
 
-    # Gerar o novo PDF
+    
     nome_pdf = nome_arquivo.replace(".pkl", ".pdf")
     pasta_saida = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "pdfs", "monstros_pdf"))
     os.makedirs(pasta_saida, exist_ok=True)
@@ -77,7 +77,7 @@ def editar_ficha_monstro():
     gerar_pdf_monstro(caminho_pdf, monstro)
     print(f"\nFicha de monstro atualizada e PDF gerado em: {caminho_pdf}")
 
-    # Atualizar o nome do arquivo se o nome mudou
+    
     novo_nome_base = monstro["nome"].lower().replace(" ", "_")
     novo_caminho = os.path.join(pasta, novo_nome_base + ".pkl")
 
@@ -86,7 +86,7 @@ def editar_ficha_monstro():
         print(f"Arquivo renomeado para: {novo_nome_base}.pkl")
         caminho = novo_caminho
 
-    # Salvar a ficha atualizada
+    
     with open(caminho, "wb") as arq:
         pickle.dump(monstro, arq)
 

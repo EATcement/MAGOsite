@@ -7,7 +7,7 @@ inventario = {
     "kit_aplicado": False
 }
 
-ficha = None  # Guarda a ficha do personagem atualmente selecionada
+ficha = None  
 
 def definir_ficha(f):
     global ficha

@@ -105,6 +105,7 @@ def gerar_pdf_sem_fundo(nome_arquivo, data_dict, inventario_dict=None):
         for item, info in inventario_dict["itens"].items():
             quantidade = info.get("quantidade", 0)
             texto_item = f"- {item} ({quantidade})"
+            pdf.set_x(pdf.l_margin)  # <-- Esta linha é o que corrige
             pdf.multi_cell(largura_inventario, 8, texto_item)
 
         ouro = inventario_dict.get("Ouro", 0)
@@ -115,8 +116,27 @@ def gerar_pdf_sem_fundo(nome_arquivo, data_dict, inventario_dict=None):
         pdf.cell(0, 10, "Inventário vazio.", ln=True)
 
 
+
+
     # Equipamentos
     equipamentos = data_dict.get("equipamentos", [])
+
+    # Evitar duplicação se os equipamentos forem exatamente os mesmos do inventário
+    inventario_itens = []
+    if inventario_dict and inventario_dict.get("itens"):
+        inventario_itens = [f"- {item} ({info.get('quantidade', 0)})" for item, info in
+                            inventario_dict["itens"].items()]
+
+    if equipamentos and (set(equipamentos) != set(inventario_itens)):
+        titulo_secao("Equipamentos")
+        pdf.set_font("Times", "I", 12)
+
+        largura_equipamentos = pdf.w - pdf.l_margin - pdf.r_margin
+
+        for item in equipamentos:
+            pdf.multi_cell(largura_equipamentos, 8, f"- {item}")
+        pdf.ln(2)
+
     if equipamentos:
         titulo_secao("Equipamentos")
         pdf.set_font("Times", "I", 12)

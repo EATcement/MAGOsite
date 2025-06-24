@@ -7,7 +7,7 @@ sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
 from modulo_mestre.menu_mestre import mestre_menu as menu_ficha_mestre
 from Modulo_criacao_de_fichas.Criacao_Fichas.menu_fichas import menu_principal as menu_criacao_fichas
-from Modulo_do_Jogador.menu import main as menu_ficha_personagem_main   
+from Modulo_do_Jogador.menu import main as menu_ficha_personagem_main
 
 def menu_principal():
     while True:

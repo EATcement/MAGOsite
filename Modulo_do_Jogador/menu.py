@@ -1,11 +1,13 @@
-# Verifica e instala fpdf automaticamente, se necessário
+# Verifica e instala fpdf2 automaticamente, se necessário
 try:
-    import fpdf
+    from fpdf import FPDF
 except ImportError:
     import subprocess
     import sys
-    print("Pacote 'fpdf' não encontrado. Instalando automaticamente...")
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "fpdf"])
+    print("Pacote 'fpdf2' não encontrado. Instalando automaticamente...")
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "fpdf2"])
+    from fpdf import FPDF  # Tenta importar novamente após instalação
+
 
 # Agora pode importar normalmente os módulos que usam fpdf
 from .historico import gerar_pdf_ficha_especifica

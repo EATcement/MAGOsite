@@ -33,10 +33,26 @@ def gerar_pdf_sem_fundo(nome_arquivo, data_dict, inventario_dict=None):
     def escrever_linha(titulo, valor):
         pdf.set_font("Times", "B", 13)
         pdf.set_text_color(60, 30, 10)
-        pdf.cell(50, 8, f"{titulo}:", ln=0)
+        pdf.cell(50, 8, f"{titulo}:", ln=0)  # título escrito
+
         pdf.set_font("Times", "", 13)
-        pdf.multi_cell(0, 8, str(valor))
+        texto = str(valor) if valor else "-"
+        
+        # Posição vertical atual para alinhar o texto valor na mesma linha
+        y_atual = pdf.get_y()
+
+        # Define cursor para início do texto valor (logo após os 50mm do título)
+        x_texto = pdf.l_margin + 50
+        pdf.set_xy(x_texto, y_atual)
+
+        largura_disponivel = pdf.w - x_texto - pdf.r_margin
+        if largura_disponivel <= 0:
+            largura_disponivel = pdf.w - pdf.l_margin - pdf.r_margin  # fallback
+
+        pdf.multi_cell(largura_disponivel, 8, texto)
         pdf.ln(1)
+
+
 
     # Informações Básicas
     titulo_secao("Informações Básicas")
@@ -79,12 +95,18 @@ def gerar_pdf_sem_fundo(nome_arquivo, data_dict, inventario_dict=None):
         escrever_linha("Habilidades", data_dict["caracteristicas_habilidades"])
 
     # Inventário
+    # Inventário
     if inventario_dict and inventario_dict.get("itens"):
         titulo_secao("Inventário")
         pdf.set_font("Times", "I", 12)
+
+        largura_inventario = pdf.w - pdf.l_margin - pdf.r_margin
+
         for item, info in inventario_dict["itens"].items():
             quantidade = info.get("quantidade", 0)
-            pdf.multi_cell(0, 8, f"- {item} ({quantidade})")
+            texto_item = f"- {item} ({quantidade})"
+            pdf.multi_cell(largura_inventario, 8, texto_item)
+
         ouro = inventario_dict.get("Ouro", 0)
         pdf.ln(1)
         pdf.cell(0, 8, f"Ouro: {ouro}G", ln=True)
@@ -92,13 +114,18 @@ def gerar_pdf_sem_fundo(nome_arquivo, data_dict, inventario_dict=None):
         pdf.set_font("Times", "I", 12)
         pdf.cell(0, 10, "Inventário vazio.", ln=True)
 
+
     # Equipamentos
     equipamentos = data_dict.get("equipamentos", [])
     if equipamentos:
         titulo_secao("Equipamentos")
         pdf.set_font("Times", "I", 12)
+        
+        largura_equipamentos = pdf.w - pdf.l_margin - pdf.r_margin
+        
         for item in equipamentos:
-            pdf.multi_cell(0, 8, f"- {item}")
+            pdf.multi_cell(largura_equipamentos, 8, f"- {item}")
         pdf.ln(2)
+
 
     pdf.output(nome_arquivo)

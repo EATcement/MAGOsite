@@ -1,6 +1,6 @@
 import pickle
 import os
-from Fichas_jogador import input_texto_obrigatorio
+
 
 PASTA_MONSTROS = "monstros"
 os.makedirs(PASTA_MONSTROS, exist_ok=True)
@@ -35,6 +35,13 @@ def escolher_opcao_numerada(titulo, opcoes):
         if escolha.isdigit() and 1 <= int(escolha) <= len(opcoes):
             return opcoes[int(escolha) - 1]
         print("Opção inválida. Tente novamente.")
+        
+def input_texto_obrigatorio(label):
+    while True:
+        texto = input(label).strip()
+        if texto:
+            return texto
+        print("Este campo não pode estar vazio.")
 
 def escolher_multiplas_opcoes(titulo, opcoes):
     print(f"\n{titulo} (digite números separados por vírgula, ou deixe vazio para nenhuma):")

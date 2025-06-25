@@ -1,6 +1,6 @@
 import random
 
-# Listas expandidas
+
 prefixos_personagem = [
     "Al", "Bel", "Zar", "Tor", "Gra", "Fen", "Lor", "Mor", "Sil", "El",
     "Kael", "Thal", "Ny", "Vael", "Ryn", "Aer", "Dur", "Eryn", "Sael", "Gal",
@@ -36,24 +36,24 @@ sufixos_lugar = [
     "zhar", "quor", "dun", "fyr", "mos", "ul", "theas", "orn", "grin", "toril"
 ]
 
-# Função base para combinar nomes
+
 def gerar_nome(prefixos, sufixos):
     nome1 = random.choice(prefixos) + random.choice(sufixos)
 
     chance = random.random()
 
-    # 20% de chance de adicionar hífen
+    
     if chance < 0.2:
         nome2 = random.choice(prefixos) + random.choice(sufixos)
         return f"{nome1}-{nome2}"
-    # 20% de chance de nome composto separado
+    
     elif chance < 0.4:
         nome2 = random.choice(prefixos) + random.choice(sufixos)
         return f"{nome1} {nome2}"
     else:
         return nome1
 
-# Funções finais expostas para o menu
+
 def gerar_nome_personagem():
     return gerar_nome(prefixos_personagem, sufixos_personagem)
 

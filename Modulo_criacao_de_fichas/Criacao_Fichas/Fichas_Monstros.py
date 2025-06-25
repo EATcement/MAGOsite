@@ -1,5 +1,6 @@
 import pickle
 import os
+from Fichas_jogador import input_texto_obrigatorio
 
 PASTA_MONSTROS = "monstros"
 os.makedirs(PASTA_MONSTROS, exist_ok=True)
@@ -53,7 +54,7 @@ def escolher_multiplas_opcoes(titulo, opcoes):
 
 def criar_ficha_monstro():
     monstro = {}
-    monstro["nome"] = input("Nome do monstro: ")
+    monstro["nome"] = input_texto_obrigatorio("Nome do monstro: ")
     monstro["tipo"] = escolher_opcao_numerada("Tipo do monstro", TIPOS_MONSTROS)
     monstro["tamanho"] = escolher_opcao_numerada("Tamanho do monstro", TAMANHOS)
     monstro["alinhamento"] = escolher_opcao_numerada("Alinhamento", ALINHAMENTOS)
@@ -77,7 +78,6 @@ def criar_ficha_monstro():
     monstro["vulnerabilidades"] = escolher_multiplas_opcoes("Vulnerabilidades", TIPOS_DANO)
     monstro["resistencias"] = escolher_multiplas_opcoes("Resistências", TIPOS_DANO)
     monstro["imunidades"] = escolher_multiplas_opcoes("Imunidades", TIPOS_DANO)
-    
     monstro["habilidades"] = input("Habilidades especiais (separadas por vírgula): ").split(",")
     monstro["ataques"] = input("Ataques (separados por vírgula): ").split(",")
     monstro["descricao"] = input("Descrição adicional (história, poderes, etc): ")
@@ -124,10 +124,10 @@ def carregar_ficha_monstro():
 
 def main():
     while True:
-        print("\nMenu - Fichas de Monstros:")
+        print("\n===== MENU DE FICHA MONSTRO =====:")
         print("1. Criar ficha de monstro")
         print("2. Carregar ficha de monstro")
-        print("3. Sair")
+        print("0. Sair")
         op = input("Escolha uma opção: ")
         if op == "1":
             monstro = criar_ficha_monstro()
@@ -135,7 +135,7 @@ def main():
             salvar_ficha_monstro(monstro)
         elif op == "2":
             carregar_ficha_monstro()
-        elif op == "3":
+        elif op == "0":
             print("Saindo...")
             break
         else:

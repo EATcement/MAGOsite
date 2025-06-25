@@ -176,13 +176,25 @@ def escolher_opcao_numerada(titulo, opcoes):
     else:
         print("Formato de opções inválido.")
         return None
-    while True:
+    while True: 
         escolha = input("Digite o número da opção desejada: ")
         if escolha.isdigit():
             escolha = int(escolha)
             if 1 <= escolha <= len(nomes):
                 return nomes[escolha - 1]
         print("Opção inválida. Tente novamente.")
+def input_idade(label):
+    while True:
+        valor = input(label)
+        if valor.isdigit() and (idade := int(valor)) > 0:
+            return idade
+        print("Idade inválida. Digite um número inteiro positivo.")
+def input_texto_obrigatorio(label):
+    while True:
+        texto = input(label).strip()
+        if texto:
+            return texto
+        print("Este campo não pode estar vazio.")
 
 
 def escolher_subclasse(classe):
@@ -223,14 +235,14 @@ def calcular_vida(ficha):
 
 def criar_ficha():
     ficha = {}
-    ficha["nome"] = input("Nome: ")
-    ficha["gênero"] = input("Gênero: ")
+    ficha["nome"] = input_texto_obrigatorio("Nome: ")
+    ficha["gênero"] = input_texto_obrigatorio("Gênero: ")
     ficha["altura"] = input("Altura: ")
     ficha["alinhamento"] = escolher_opcao_numerada("Alinhamentos", ALINHAMENTOS)
-    ficha["idade"] = input("Idade: ")
-    ficha["aparência"] = input("Aparência: ")
-    ficha["personalidade"] = input("Personalidade: ")
-    ficha["história"] = input("História: ")
+    ficha["idade"] = input_idade("Idade: ")
+    ficha["aparência"] = input_texto_obrigatorio("Aparência: ")
+    ficha["personalidade"] = input_texto_obrigatorio("Personalidade: ")
+    ficha["história"] = input_texto_obrigatorio("História: ")
     ficha["raça"] = escolher_opcao_numerada("Raças", RACAS)
     ficha["classe"] = escolher_opcao_numerada("Classes", CLASSES)
     ficha["subclasses"] = escolher_subclasse(ficha["classe"])
@@ -293,10 +305,10 @@ def carregar_ficha():
 
 def main():
     while True:
-        print("\nMenu:")
+        print("\n===== MENU DE FICHA JOGADOR =====:")
         print("1. Criar ficha")
         print("2. Carregar ficha")
-        print("3. Sair")
+        print("0. Sair")
         op = input("Escolha uma opção: ")
         if op == "1":
             ficha = criar_ficha()
@@ -304,7 +316,7 @@ def main():
             salvar_ficha(ficha)
         elif op == "2":
             carregar_ficha()
-        elif op == "3":
+        elif op == "0":
             print("Saindo...")
             break
         else:

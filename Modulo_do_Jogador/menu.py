@@ -18,7 +18,7 @@ from .inventario import menu_inventario
 
 def menu_ficha_personagem():
     print("\n=== MENU FICHA DE PERSONAGEM ===")
-    print("1. Histórico de ficha de personagem")
+    print("1. Gerar PDF de ficha de personagem")
     print("2. Edição de ficha")
     print("3. Inventário de personagem")
     print("4. Excluir ficha")

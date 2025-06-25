@@ -107,44 +107,62 @@ def gerar_pdf_diario():
         diario = pickle.load(f)
 
     pdf = FPDF()
+    pdf.set_auto_page_break(auto=True, margin=15)
     pdf.add_page()
 
-    # Fundo pergaminho
-    pdf.set_fill_color(245, 240, 225)  # bege pergaminho
-    pdf.rect(0, 0, pdf.w, pdf.h, 'F')  # retângulo preenchido cobrindo a página
+    # Fundo bege estilo pergaminho
+    pdf.set_fill_color(245, 240, 225)
+    pdf.rect(0, 0, pdf.w, pdf.h, 'F')
 
-    # Cabeçalho do diário
-    pdf.set_text_color(119, 51, 25)  # marrom avermelhado
-    pdf.set_font("Times", "B", 16)
-    pdf.cell(0, 10, "*** Diário de Aventura ***", ln=True, align="C")
-    pdf.cell(0, 10, f"{diario['personagem']}", ln=True, align="C")
+    # Moldura simples
+    pdf.set_draw_color(150, 130, 100)
+    pdf.rect(5, 5, pdf.w - 10, pdf.h - 10)
+
+    # Título principal (sem símbolos especiais)
+    pdf.set_text_color(101, 67, 33)
+    pdf.set_font("Times", "B", 20)
+    pdf.cell(0, 15, "--- Diario de Aventura ---", ln=True, align="C")
+    pdf.set_font("Times", "I", 14)
+    pdf.cell(0, 10, f"Personagem: {diario['personagem']}", ln=True, align="C")
     pdf.ln(10)
 
     for entrada in diario["entradas"]:
-        pdf.set_text_color(102, 51, 25)  # cabeçalho das entradas marrom avermelhado
-        pdf.set_font("Times", "B", 12)
-
         tipo = entrada['tipo'].upper()
         data = entrada['data']
         titulo = entrada.get('titulo', '').strip()
-        cabecalho = f"[{tipo}]"
+        cabecalho = f"* [{tipo}]"
         if titulo:
             cabecalho += f" {titulo} -"
         cabecalho += f" {data}"
 
-        pdf.cell(0, 8, cabecalho, ln=True)
+        # Cabeçalho da entrada
+        pdf.set_text_color(120, 60, 30)
+        pdf.set_font("Times", "B", 13)
+        pdf.multi_cell(0, 8, cabecalho)
+        pdf.ln(2)
 
-        pdf.set_text_color(30, 30, 30)  # texto corpo cinza escuro
+        # Corpo do texto
+        pdf.set_text_color(40, 40, 40)
         pdf.set_font("Times", "", 12)
-        pdf.multi_cell(0, 8, entrada["texto"])
+        texto_formatado = quebrar_palavras_longas(entrada["texto"])
+        pdf.multi_cell(0, 8, texto_formatado)
         pdf.ln(5)
 
+        # Linha de separação entre entradas
+        pdf.set_draw_color(180, 160, 120)
+        pdf.set_line_width(0.5)
+        pdf.line(10, pdf.get_y(), pdf.w - 10, pdf.get_y())
+        pdf.ln(5)
+
+    # Salvar PDF
     pasta_pdf = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "pdfs", "diarios_pdf"))
     os.makedirs(pasta_pdf, exist_ok=True)
     nome_pdf = f"diario_{nome.lower()}.pdf"
     caminho_pdf = os.path.join(pasta_pdf, nome_pdf)
     pdf.output(caminho_pdf)
     print(f"PDF gerado com sucesso: {caminho_pdf}")
+
+
 
 
 def menu_diario():

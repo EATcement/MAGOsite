@@ -110,15 +110,15 @@ def gerar_pdf_diario():
     pdf.set_auto_page_break(auto=True, margin=15)
     pdf.add_page()
 
-    # Fundo bege estilo pergaminho
+    
     pdf.set_fill_color(245, 240, 225)
     pdf.rect(0, 0, pdf.w, pdf.h, 'F')
 
-    # Moldura simples
+    
     pdf.set_draw_color(150, 130, 100)
     pdf.rect(5, 5, pdf.w - 10, pdf.h - 10)
 
-    # Título principal (sem símbolos especiais)
+    
     pdf.set_text_color(101, 67, 33)
     pdf.set_font("Times", "B", 20)
     pdf.cell(0, 15, "--- Diario de Aventura ---", ln=True, align="C")
@@ -135,26 +135,26 @@ def gerar_pdf_diario():
             cabecalho += f" {titulo} -"
         cabecalho += f" {data}"
 
-        # Cabeçalho da entrada
+        
         pdf.set_text_color(120, 60, 30)
         pdf.set_font("Times", "B", 13)
         pdf.multi_cell(0, 8, cabecalho)
         pdf.ln(2)
 
-        # Corpo do texto
+        
         pdf.set_text_color(40, 40, 40)
         pdf.set_font("Times", "", 12)
         texto_formatado = quebrar_palavras_longas(entrada["texto"])
         pdf.multi_cell(0, 8, texto_formatado)
         pdf.ln(5)
 
-        # Linha de separação entre entradas
+        
         pdf.set_draw_color(180, 160, 120)
         pdf.set_line_width(0.5)
         pdf.line(10, pdf.get_y(), pdf.w - 10, pdf.get_y())
         pdf.ln(5)
 
-    # Salvar PDF
+    
     pasta_pdf = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "pdfs", "diarios_pdf"))
     os.makedirs(pasta_pdf, exist_ok=True)
     nome_pdf = f"diario_{nome.lower()}.pdf"
@@ -162,6 +162,34 @@ def gerar_pdf_diario():
     pdf.output(caminho_pdf)
     print(f"PDF gerado com sucesso: {caminho_pdf}")
 
+def excluir_diario():
+    nome = selecionar_personagem_com_ficha()
+    if not nome:
+        return
+
+    
+    caminho_pkl = os.path.join(PASTA_DIARIOS, f"{nome.lower()}_diario.pkl")
+    pasta_pdf = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "pdfs", "diarios_pdf"))
+    caminho_pdf = os.path.join(pasta_pdf, f"diario_{nome.lower()}.pdf")
+
+    confirmacao = input(f"Tem certeza que deseja excluir o diário de {nome}? (s/n): ").strip().lower()
+    if confirmacao != "s":
+        print("Exclusão cancelada.")
+        return
+
+    
+    if os.path.exists(caminho_pkl):
+        os.remove(caminho_pkl)
+        print("Arquivo .pkl do diário excluído.")
+    else:
+        print("Arquivo .pkl não encontrado.")
+
+    
+    if os.path.exists(caminho_pdf):
+        os.remove(caminho_pdf)
+        print("Arquivo PDF do diário excluído.")
+    else:
+        print("Arquivo PDF não encontrado.")
 
 
 
@@ -171,6 +199,7 @@ def menu_diario():
         print("1. Criar novo diário para um personagem")
         print("2. Adicionar nova entrada")
         print("3. Gerar PDF/ Atualizar PDF do diário")
+        print("4. Excluir diário")
         print("0. Voltar")
 
         op = input("Escolha uma opção: ").strip()
@@ -180,6 +209,8 @@ def menu_diario():
             adicionar_entrada()
         elif op == "3":
             gerar_pdf_diario()
+        elif op == "4":
+            excluir_diario()
         elif op == "0":
             break
         else:

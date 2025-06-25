@@ -20,7 +20,8 @@ def listar_diarios_existentes():
         return None
     print("\nDiários disponíveis:")
     for idx, f in enumerate(arquivos, 1):
-        print(f"{idx}. {f.replace("_diario.pkl", "")}")
+        print(f"{idx}. {f.replace('_diario.pkl', '')}")
+
     while True:
         esc = input("Escolha o número do diário: ").strip()
         if esc.isdigit() and 1 <= int(esc) <= len(arquivos):

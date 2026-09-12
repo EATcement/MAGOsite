@@ -38,6 +38,6 @@ A partir do menu principal é possível acessar as diferentes ferramentas do sis
 
 ## Sobre o projeto
 
-Este foi meu primeiro projeto em Python e teve um caráter principalmente pessoal e experimental. Por isso, a estrutura do código não segue uma arquitetura totalmente padronizada, mas foi um projeto importante para aprender conceitos de programação, modularização, manipulação de arquivos, geração de PDFs e criação de sistemas interativos em Python.
+Este foi um dos nossos primeiros projetos em Python e teve um caráter principalmente criativo e experimental. Por isso, a estrutura do código não segue uma arquitetura totalmente padronizada, mas foi um projeto importante para aprender conceitos de programação, modularização, manipulação de arquivos, geração de PDFs e criação de sistemas interativos em Python.
 
 

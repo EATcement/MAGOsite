@@ -1,4 +1,4 @@
-# MAGOsite
+# Criador de fichas para RPG em pdf
 
 Um sistema em Python para criação e gerenciamento de fichas de RPG, inspirado em D&D.
 
